@@ -13,6 +13,8 @@ class Numpad extends React.Component {
     this.state = {
       token: '',
       tokenLength: 4,
+      modalTitle: 'Error',
+      modalContent: 'Token is 4 digits only',
     };
   }
 
@@ -24,7 +26,9 @@ class Numpad extends React.Component {
           return {token: prevState.token + newValue};
       }
 
-       document.getElementById('myModal').modal('show')
+      var dialog = document.getElementsByClassName('modal-wrapper')[0]
+      console.log("Show dialog ", dialog);
+      dialog.click();
     });
   }
 
@@ -45,6 +49,7 @@ class Numpad extends React.Component {
   render (){
     return (
       <div className="container">
+        <Modal title={this.state.modalTitle} content={this.state.modalContent}/>
         <div className="row">
           <div className="col-md-12 col-sm-12 col-xs-12 bg-white">
             <div className="row">
@@ -127,20 +132,28 @@ class Numpad extends React.Component {
   }
 }
 
-class View extends React.Component {
+class Modal extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      title: props.title,
+      content: props.content,
+    };
+  }
   state = {
     isShowingModal: false,
   }
   handleClick = () => this.setState({isShowingModal: true})
   handleClose = () => this.setState({isShowingModal: false})
+
   render() {
-    return <div onClick={this.handleClick}>
+    return <div className="modal-wrapper" onClick={this.handleClick}>
       {
         this.state.isShowingModal &&
         <ModalContainer onClose={this.handleClose}>
           <ModalDialog onClose={this.handleClose}>
-            <h1>Dialog Content</h1>
-            <p>More Content. Anything goes here</p>
+            <h1>{this.state.title}</h1>
+            <p>{this.state.content}</p>
           </ModalDialog>
         </ModalContainer>
       }
