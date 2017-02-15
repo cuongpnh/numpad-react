@@ -57,12 +57,14 @@ p
 
 .num
 {
-    /*border: 1px solid #9e9e9e;*/
+    border: 1px solid #9e9e9e;
     height: 80px;
     background-color: #fff;
     color: #333;
     cursor: pointer;
 }
+
+
 .num:hover
 {
     background-color: #9e9e9e;
@@ -72,6 +74,18 @@ p
     -webkit-transition: background-color .2s linear 0s;
     -o-transition: background-color .2s linear 0s;
 }
+
+.num.disable
+{
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.num.disable:hover
+{
+    background-color: #000;
+}
+
 .txt
 {
     font-size: 30px;

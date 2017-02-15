@@ -1,10 +1,11 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
-import {ModalContainer, ModalDialog} from 'react-modal-dialog';
+import Button from './Button';
+import GlyphButton from './GlyphButton';
 import './index.css';
 import './Numpad.css';
+
 
 
 class Numpad extends React.Component {
@@ -13,115 +14,77 @@ class Numpad extends React.Component {
     this.state = {
       token: '',
       tokenLength: 4,
-      modalTitle: 'Error',
-      modalContent: 'Token is 4 digits only',
+      showNumericButton: true,
+      showClearButton: false,
+      showEnterButton: false,
     };
+
   }
 
   onNumberClick = (event) => {
     const newValue = event.target.innerHTML;
-    this.setState((prevState) => {
-      const currentTokenLength = prevState.token.length
-      if (currentTokenLength < this.state.tokenLength) {
-          return {token: prevState.token + newValue};
-      }
 
-      var dialog = document.getElementsByClassName('modal-wrapper')[0]
-      console.log("Show dialog ", dialog);
-      dialog.click();
+    if (this.isTokenValid()) {
+      return;
+    }
+
+    this.setState((prevState) => {
+      const newToken = prevState.token + newValue;
+      const showNumericButton = (newToken.length !== this.state.tokenLength);
+
+      return {token: prevState.token + newValue, showNumericButton};
     });
   }
 
   onClear = (event) => {
-    this.setState((prevState) => {
-      return {token: ''};
-    });
+    this.initState();
   }
 
   onEnter = (event) => {
-    var token = this.state.token;
-    if (token == "") {
-      alert("Có cái gì đâu mà enter mạy")
+    if (!this.isTokenValid()) {
       return
     }
+    this.sendRequestToServer()
+  }
+
+  isTokenValid() {
+    return this.state.token.length === this.state.tokenLength;
+  }
+
+  sendRequestToServer() {
+    this.initState();
+    console.log("Sending request....");
+  }
+
+  initState(){
+    this.setState({
+      token: '',
+      showNumericButton: true,
+      showClearButton: false,
+      showEnterButton: false,
+    });
   }
 
   render (){
     return (
       <div className="container">
-        <Modal title={this.state.modalTitle} content={this.state.modalContent}/>
         <div className="row">
           <div className="col-md-12 col-sm-12 col-xs-12 bg-white">
             <div className="row">
               <div className="col-md-12 col-sm-12 col-xs-12">
                   <div className="input-group input-group-lg full-width pad-top-10 pad-bot-30">
-                    <input type="text" className="form-control" name="token" id="token" value={this.state.token} />
+                    <input type="text" className="form-control" name="token" id="token" value={this.state.token} placeholder="XXXX"/>
                   </div>
                   <div className="num-pad">
-                    <div className="col-md-4 col-sm-4 col-xs-4">
-                      <div className="num" onClick={this.onNumberClick}>
-                        <div className="txt">1</div>
-                      </div>
-                    </div>
-                    <div className="col-md-4 col-sm-4 col-xs-4">
-                      <div className="num" onClick={this.onNumberClick}>
-                        <div className="txt">2</div>
-                      </div>
-                    </div>
-                    <div className="col-md-4 col-sm-4 col-xs-4">
-                      <div className="num" onClick={this.onNumberClick}>
-                        <div className="txt">3</div>
-                      </div>
-                    </div>
-                    <div className="col-md-4 col-sm-4 col-xs-4">
-                      <div className="num" onClick={this.onNumberClick}>
-                        <div className="txt">4</div>
-                      </div>
-                    </div>
-                    <div className="col-md-4 col-sm-4 col-xs-4">
-                      <div className="num" onClick={this.onNumberClick}>
-                        <div className="txt">5</div>
-                      </div>
-                    </div>
-                    <div className="col-md-4 col-sm-4 col-xs-4">
-                      <div className="num" onClick={this.onNumberClick}>
-                        <div className="txt">6</div>
-                      </div>
-                    </div>
-                    <div className="col-md-4 col-sm-4 col-xs-4">
-                      <div className="num" onClick={this.onNumberClick}>
-                        <div className="txt">7</div>
-                      </div>
-                    </div>
-                    <div className="col-md-4 col-sm-4 col-xs-4">
-                      <div className="num" onClick={this.onNumberClick}>
-                        <div className="txt">8</div>
-                      </div>
-                    </div>
-                    <div className="col-md-4 col-sm-4 col-xs-4">
-                      <div className="num" onClick={this.onNumberClick}>
-                        <div className="txt">9</div>
-                      </div>
-                    </div>
-                    <div className="col-md-4 col-sm-4 col-xs-4">
-                      <div className="num" onClick={this.onClear}>
-                        <div className="txt">
-                          <div className="glyphicon glyphicon-remove"></div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-4 col-sm-4 col-xs-4">
-                      <div className="num" onClick={this.onNumberClick}>
-                          <div className="txt">0</div>
-                      </div>
-                    </div>
-                    <div className="col-md-4 col-sm-4 col-xs-4">
-                      <div className="num" onClick={this.onEnter}>
-                          <div className="txt">
-                            <div className="glyphicon glyphicon-ok"></div>
-                          </div>
-                      </div>
-                    </div>
+                    {
+                      [1,2,3,4,5,6,7,8,9].map((e) =>
+                        <Button disable={ !this.state.showNumericButton } key={e} value={e} onClick={this.onNumberClick}/>
+                      )
+                    }
+
+                    <GlyphButton key="clearBtn" glyphIcon="glyphicon-remove" onClick={this.onClear}/>
+                    <Button disable={ !this.state.showNumericButton } key="0" value="0" onClick={this.onNumberClick}/>
+                    <GlyphButton key="okBtn" glyphIcon="glyphicon-ok" onClick={this.onEnter}/>
                   </div>
                 </div>
               </div>
@@ -129,35 +92,6 @@ class Numpad extends React.Component {
         </div>
       </div>
     )
-  }
-}
-
-class Modal extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      title: props.title,
-      content: props.content,
-    };
-  }
-  state = {
-    isShowingModal: false,
-  }
-  handleClick = () => this.setState({isShowingModal: true})
-  handleClose = () => this.setState({isShowingModal: false})
-
-  render() {
-    return <div className="modal-wrapper" onClick={this.handleClick}>
-      {
-        this.state.isShowingModal &&
-        <ModalContainer onClose={this.handleClose}>
-          <ModalDialog onClose={this.handleClose}>
-            <h1>{this.state.title}</h1>
-            <p>{this.state.content}</p>
-          </ModalDialog>
-        </ModalContainer>
-      }
-    </div>;
   }
 }
 
