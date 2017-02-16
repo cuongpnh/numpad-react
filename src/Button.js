@@ -22,8 +22,8 @@ class Button extends React.Component {
   render() {
     return(
         <div className="col-md-4 col-sm-4 col-xs-4">
-          <div className={"num " + (this.state.disable ? "disable" : "")} onClick={this.handleClick}>
-              <div className="txt">{this.state.value}</div>
+          <div className={"num " + (this.state.disable ? "disable" : "")}>
+              <div className="txt" onClick={this.handleClick}>{this.state.value}</div>
           </div>
         </div>
     )

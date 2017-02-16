@@ -5,9 +5,14 @@ class GlyphButton extends React.Component {
     super(props);
     this.state = {
       glyphIcon: props.glyphIcon,
+      disable: props.disable,
       onClick: props.handleClick
     }
     this.handleClick = this.handleClick.bind(this);
+  }
+
+  componentWillReceiveProps = (nextProps) => {
+    this.setState({disable: nextProps.disable})
   }
 
   handleClick (event){
@@ -17,8 +22,8 @@ class GlyphButton extends React.Component {
   render() {
     return(
         <div className="col-md-4 col-sm-4 col-xs-4">
-          <div className="num" onClick={this.handleClick}>
-            <div className="txt">
+          <div className={"num " + (this.state.disable ? "disable" : "")}>
+            <div className="txt" onClick={this.handleClick}>
               <div className={"glyphicon " + this.state.glyphIcon}></div>
             </div>
           </div>

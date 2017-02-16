@@ -1,4 +1,3 @@
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Button from './Button';
@@ -14,9 +13,9 @@ class Numpad extends React.Component {
     this.state = {
       token: '',
       tokenLength: 4,
-      showNumericButton: true,
-      showClearButton: false,
-      showEnterButton: false,
+      disableNumericButton: false,
+      disableClearButton: true,
+      disableEnterButton: true,
     };
 
   }
@@ -30,9 +29,12 @@ class Numpad extends React.Component {
 
     this.setState((prevState) => {
       const newToken = prevState.token + newValue;
-      const showNumericButton = (newToken.length !== this.state.tokenLength);
 
-      return {token: prevState.token + newValue, showNumericButton};
+      const disableClearButton = false;
+      const disableEnterButton = (newToken.length !== this.state.tokenLength);
+      const disableNumericButton = (newToken.length === this.state.tokenLength);
+
+      return {token: prevState.token + newValue, disableNumericButton, disableClearButton, disableEnterButton};
     });
   }
 
@@ -59,9 +61,9 @@ class Numpad extends React.Component {
   initState(){
     this.setState({
       token: '',
-      showNumericButton: true,
-      showClearButton: false,
-      showEnterButton: false,
+      disableNumericButton: false,
+      disableClearButton: true,
+      disableEnterButton: true,
     });
   }
 
@@ -78,13 +80,13 @@ class Numpad extends React.Component {
                   <div className="num-pad">
                     {
                       [1,2,3,4,5,6,7,8,9].map((e) =>
-                        <Button disable={ !this.state.showNumericButton } key={e} value={e} onClick={this.onNumberClick}/>
+                        <Button disable={ this.state.disableNumericButton } key={e} value={e} onClick={this.onNumberClick}/>
                       )
                     }
 
-                    <GlyphButton key="clearBtn" glyphIcon="glyphicon-remove" onClick={this.onClear}/>
-                    <Button disable={ !this.state.showNumericButton } key="0" value="0" onClick={this.onNumberClick}/>
-                    <GlyphButton key="okBtn" glyphIcon="glyphicon-ok" onClick={this.onEnter}/>
+                    <GlyphButton disable={ this.state.disableClearButton } key="clearBtn" glyphIcon="glyphicon-remove" onClick={this.onClear}/>
+                    <Button disable={ this.state.disableNumericButton } key="0" value="0" onClick={this.onNumberClick}/>
+                    <GlyphButton disable={ this.state.disableEnterButton } key="okBtn" glyphIcon="glyphicon-ok" onClick={this.onEnter}/>
                   </div>
                 </div>
               </div>
