@@ -2,10 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Button from './Button';
 import GlyphButton from './GlyphButton';
-import './index.css';
 import './Numpad.css';
-
-
 
 class Numpad extends React.Component {
   constructor(props) {
