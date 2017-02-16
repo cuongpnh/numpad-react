@@ -13,11 +13,14 @@ class Numpad extends React.Component {
       disableNumericButton: false,
       disableClearButton: true,
       disableEnterButton: true,
+      errorMsg: ''
     };
 
   }
 
   onNumberClick = (event) => {
+    this.hideAlert();
+
     const newValue = event.target.innerHTML;
 
     if (this.isTokenValid()) {
@@ -36,10 +39,17 @@ class Numpad extends React.Component {
   }
 
   onClear = (event) => {
+    if (this.state.disableClearButton) {
+      return;
+    }
     this.initState();
   }
 
   onEnter = (event) => {
+    if (this.state.disableEnterButton) {
+      return;
+    }
+
     if (!this.isTokenValid()) {
       return
     }
@@ -51,8 +61,32 @@ class Numpad extends React.Component {
   }
 
   sendRequestToServer() {
+    const url = 'http://localhost:3001/api/machine/dispense/' + this.state.token;
+    const method = 'POST';
+    const header = {'Content-Type': 'application/x-www-form-urlencoded'}
+
+    fetch(url, {
+      method: method,
+      headers: header,
+    })
+    .then((response) => {
+      if (!response.ok) {
+        this.showAlert();
+        return
+      }
+
+      return response.json();
+    })
+    .then((responseJson) => {
+      if (!responseJson.success) {
+        this.showAlert('Token is wrong or expired');
+      }
+    })
+    .catch((error) => {
+      this.showAlert();
+    });
+
     this.initState();
-    console.log("Sending request....");
   }
 
   initState(){
@@ -61,7 +95,16 @@ class Numpad extends React.Component {
       disableNumericButton: false,
       disableClearButton: true,
       disableEnterButton: true,
+      errorMsg: ''
     });
+  }
+
+  showAlert(errorMsg = 'An error has occur. Please try again') {
+    this.setState({errorMsg: errorMsg});
+  }
+
+  hideAlert() {
+   this.setState({errorMsg: ''});
   }
 
   render (){
@@ -74,6 +117,11 @@ class Numpad extends React.Component {
                   <div className="input-group input-group-lg full-width pad-top-10 pad-bot-30">
                     <input type="text" className="form-control" name="token" id="token" value={this.state.token} placeholder="XXXX"/>
                   </div>
+
+                  <div className={"alert alert-danger " + ((this.state.errorMsg === '') ? "hide" : "")}>
+                    <strong>{this.state.errorMsg}</strong>
+                  </div>
+
                   <div className="num-pad">
                     {
                       [1,2,3,4,5,6,7,8,9].map((e) =>
